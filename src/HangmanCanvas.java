@@ -1,47 +1,58 @@
-/*
- * File: HangmanCanvas.java
- * ---------------------
- * This class holds the graphics elements to the Hangman game.
- * Author: Cobalt - M.Cabatuan
- * Date modified: 06/11/2019
- */
-
-
 import acm.graphics.GCanvas;
 import acm.graphics.GLabel;
 
+import java.io.FileReader;
+import java.io.IOException;
+
+import java.util.Scanner;
 public class HangmanCanvas extends GCanvas {
-
-    private static final int TEXT_HEIGHT = 20;   // you can modify this to suit your ascii art
-    private static final int TEXT_X_OFFSET = 12;   // you can modify this to suit your ascii art
-    private int textX;
-    private int textY;
-
-
     /**
      * Resets the display so that only the hangman scaffold appears
      */
-    public void reset() {
-        // Sample graphics object
-        GLabel testMessage = new GLabel("Hello LBYCPEI!");
+    public void resetHangman() {
+        removeAll();
+
+    }
+    public void displayHangman(int guessCount) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (Scanner reader = new Scanner(new FileReader("assets/display" + guessCount + ".txt"))) {
+            String line;
+            while (reader.hasNext()) {
+                line = reader.nextLine();
+                stringBuilder.append(line).append("\n");
+                printText(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String asciiArt = stringBuilder.toString();
+        String[] lines = asciiArt.split("\n");
+        //int yOffset = (getHeight() - lines.length * TEXT_Y_OFFSET) / 2;
+
         textX = TEXT_X_OFFSET;
-        textY = TEXT_HEIGHT;
-        add(testMessage,  textX , textY);
+        textY = 0;
 
-        GLabel nextMessage = new GLabel("This is the next line!");
-        textY += TEXT_HEIGHT;
-        add(nextMessage,  textX , textY );
-
-        printText("Custom println()");
-
+        for (int linesIt = 0; linesIt < lines.length; linesIt++) {
+            printText(lines[linesIt]);
+        }
         printText("Custom println()");
     }
+    private static final int TEXT_Y_OFFSET = 20;   // you can modify this to suit your ascii art
+    private static final int TEXT_X_OFFSET = 0;   // you can modify this to suit your ascii art
+    private int textX;
+    private int textY;
 
     public void printText(String text){
         GLabel line = new GLabel(text);
-        textY += TEXT_HEIGHT;
         add(line,  textX , textY );
+        //add(line, 0, 20);
+        line.setFont("Roboto-20");
+        textY += TEXT_Y_OFFSET;
+        System.out.println(text);
     }
-
-    /* Write your methods here */
+    public void printText(String[] text){
+        for (String str : text) {
+            printText(str);
+        }
+    }
 }
